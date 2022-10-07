@@ -113,7 +113,12 @@ class OrdersManager:
     """
 
     def get_orders_by_user(self, user_id: int) -> typing.List[Order]:
-        return [Order()]
+        try:
+            user = self.users[user_id]
+            return [self.orders[o_id] for o_id in user.orders]
+        except KeyError:
+            print(f"There is no user with id {user_id}.\n Try another id.",
+            file=sys.stderr)
 
     def load_users(self, users: typing.List[str]):
         for f in users:
