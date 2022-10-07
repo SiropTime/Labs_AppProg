@@ -53,7 +53,7 @@ class OrdersManager:
 
         self.load_orders(self.files["orders"])
         self.load_items(self.files["items"])
-        # self.load_users(self.files["users"])
+        self.load_users(self.files["users"])
 
         del self.files
 
@@ -117,7 +117,7 @@ class OrdersManager:
 
     def load_users(self, users: typing.List[str]):
         for f in users:
-            u = self.serializing_manager.deserialize_json(User, f)
+            u = self.serializing_manager.deserialize_xml(User, f)
             self.users[u.id] = u
 
     def save_users(self):

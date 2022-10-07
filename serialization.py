@@ -52,6 +52,35 @@ class SerializingManager:
             print(f"{err}\nDidn't find a serialized file with name {name}. "
                   f"Try to change name or serialize object before.",
                   file=sys.stderr)
+            return None
 
     def deserialize_xml(self, obj: object, name: str) -> object:
-        pass
+        try:
+            r_obj = obj()
+            ds_file = ET.parse(f"data/{name}")
+            
+            root = ds_file.getroot()
+
+            for elem in root:
+                if elem.tag in r_obj.__dict__.keys():
+                    try:
+                        tmp = int(elem.text)
+                        r_obj.__dict__[elem.tag] = tmp
+                    except ValueError:
+                        r_obj.__dict__[elem.tag] = elem.text
+                    except TypeError:
+                        arr = []
+                        for subelem in elem:
+                            try:
+                                arr.append(int(subelem.text))
+                            except ValueError:
+                                arr.append(subelem.text)
+                            print(subelem.text, type(subelem))
+                        r_obj.__dict__[elem.tag] = arr
+            return r_obj
+
+        except FileNotFoundError as err:
+            print(f"{err}\nDidn't find a serialized file with name {name}. "
+                  f"Try to change name or serialize object before.",
+                  file=sys.stderr)
+            return None

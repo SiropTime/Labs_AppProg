@@ -7,4 +7,4 @@ if __name__ == '__main__':
 
     print(orm.orders)
     print(orm.items)
-    print(orm.users)
+    print([user.__dict__ for user in orm.users.values()])
