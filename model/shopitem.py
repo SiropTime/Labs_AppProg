@@ -1,6 +1,6 @@
 import typing
 
-from utility import ITEM
+from constants import ITEM
 
 
 class ShopItem:

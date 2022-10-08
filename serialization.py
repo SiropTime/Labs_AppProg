@@ -5,9 +5,11 @@ import xml.etree.ElementTree as ET
 
 
 class SerializingManager:
-    def serialize_json(self, obj: object) -> dict:
+    def serialize_json(self, obj: object, name: str = "", way: str = "") -> dict:
+        f_name = name if not name == "" else obj.id
+        f_path = way if not way == "" else "data/"
         try:
-            with open(f"data/{obj.id}{obj.type}", "w", encoding='utf-8') as s_json:
+            with open(f"{f_path}{f_name}{obj.type}", "w", encoding='utf-8') as s_json:
                 json.dump(obj.__dict__, s_json, ensure_ascii=False)
             return json.loads(json.dumps(obj.__dict__, ensure_ascii=False))
         except FileNotFoundError:
@@ -15,7 +17,7 @@ class SerializingManager:
                   file=sys.stderr)
             return {"message": "Found error with serializing files. Check argument!"}
 
-    def serialize_xml(self, obj: object) -> str:
+    def serialize_xml(self, obj: object, name: str = "", way: str = "") -> str:
         data = ET.Element('data')
         for field, value in obj.__dict__.items():
             item = ET.SubElement(data, field)
@@ -28,7 +30,11 @@ class SerializingManager:
                 item.text = str(value)
 
         s_data = str(ET.tostring(data, encoding='unicode'))
-        with open(f"data/{obj.id}{obj.type}", 'w', encoding='utf-8') as f:
+
+        f_name = name if not name == "" else obj.id
+        f_path = way if not way == "" else "data/"
+
+        with open(f"{f_path}{f_name}{obj.type}", 'w', encoding='utf-8') as f:
             f.write(s_data)
 
         return s_data
@@ -67,7 +73,10 @@ class SerializingManager:
                         tmp = int(elem.text)
                         r_obj.__dict__[elem.tag] = tmp
                     except ValueError:
-                        r_obj.__dict__[elem.tag] = elem.text
+                        if not elem.text[0] == "[":
+                            r_obj.__dict__[elem.tag] = elem.text
+                        else:
+                            r_obj.__dict__[elem.tag] = []
                     except TypeError:
                         arr = []
                         for subelem in elem:
@@ -75,7 +84,6 @@ class SerializingManager:
                                 arr.append(int(subelem.text))
                             except ValueError:
                                 arr.append(subelem.text)
-                            print(subelem.text, type(subelem))
                         r_obj.__dict__[elem.tag] = arr
             return r_obj
 

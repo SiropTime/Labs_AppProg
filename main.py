@@ -1,10 +1,9 @@
-from order import OrdersManager
+from ordersmanager import OrdersManager
+
+from utility import main_cli
+
 
 if __name__ == '__main__':
-    print("Maltsev Timofey IDB-21-10\n\n")
-    
     orm = OrdersManager()
 
-    print(orm.orders)
-    print(orm.items)
-    print(orm.users)
+    main_cli(orm)
